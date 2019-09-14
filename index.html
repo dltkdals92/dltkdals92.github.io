@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script>
+		/**
+		 * Trigger the provided url scheme or fallback to Google Play Store.
+		 * Support of Chrome, Firefox, Opera and default Android Browser.
+		 * @param {String} scheme: URI scheme
+		 * @param {String} data: URI hierarchical part + query
+		 * @param {String} packagename: application identifier
+		 */
+		function triggerScheme(scheme, data, packagename) {
+			var url_scheme = scheme + "://" + data;
+			var url_store = "https://play.google.com/store/apps/details?id=" + packagename;
+			var url_chrome = "intent://" + data + "#Intent;scheme=" + scheme + ";package=" + packagename + ";end";
+
+			function iframe(scheme, store) {
+				var iframe = document.createElement("iframe");
+				iframe.style.border = "none";
+				iframe.style.width = "1px";
+				iframe.style.height = "1px";
+				iframe.onload = function() {
+					document.location = store;
+				};
+				iframe.src = scheme;
+				document.body.appendChild(iframe);
+			}
+
+			if (navigator.userAgent.match(/OPR/)) {
+				iframe(url_scheme, url_store);
+			} else if (navigator.userAgent.match(/Chrome/)) {
+				document.location = url_chrome;
+			} else if (navigator.userAgent.match(/Firefox/)) {
+				document.location = url_scheme;
+			} else {
+				iframe(url_scheme, url_store);
+			}
+		}
+	</script>
+	<script type="text/javascript">
+		// myscheme://init?param1=value1&param2=value2
+		var scheme = "circleinapp://app.circleinapp.com/oauth";
+		var data = "?nonce=foo";
+		var packagename = "com.circlein.android";
+	</script>
+</head>
+<body>
+	<button type="button" onclick="triggerScheme(scheme, data, packagename);">Start</button>
+</body>
+</html>
